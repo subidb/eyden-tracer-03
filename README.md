@@ -1,5 +1,5 @@
 # Practical Assignment 3
-**Name: Subid Basaula .......
+**Name: Subid Basaula 
 ## Problem 3.1
 ### OBJ Scene loader (Points 30)
 Until now we have only hardcoded our scene descriptions in main.cpp. This is of course not practical. In the new framework, a method ```CScene::ParseOBJ()``` is added to the class ```CScene```, in order to load a scene-description from an obj-file. To make the method work proceed as follows:
