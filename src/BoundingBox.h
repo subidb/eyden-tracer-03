@@ -1,6 +1,7 @@
 #pragma once
 
 #include "types.h"
+#include "ray.h"
 
 struct Ray;
 
@@ -41,6 +42,12 @@ public:
 	void extend(Vec3f a)
 	{
 		// --- PUT YOUR CODE HERE ---
+		this->m_min[0] = std::min(this->m_min[0], a[0]);
+		this->m_min[1] = std::min(this->m_min[1], a[1]);
+		this->m_min[2] = std::min(this->m_min[2], a[2]);
+		this->m_max[0] = std::max(this->m_max[0], a[0]);
+		this->m_max[1] = std::max(this->m_max[1], a[1]);
+		this->m_max[2] = std::max(this->m_max[2], a[2]);
 	}
 	
 	/**
@@ -50,6 +57,8 @@ public:
 	void extend(const CBoundingBox& box)
 	{
 		// --- PUT YOUR CODE HERE ---
+		this->extend(box.m_min);
+		this->extend(box.m_max);
 	}
 	
 	/**
@@ -59,7 +68,7 @@ public:
 	bool overlaps(const CBoundingBox& box)
 	{
 		// --- PUT YOUR CODE HERE ---
-		return true;
+		return (this->m_min[0] < box.m_max[0] && box.m_min[0] < this->m_max[0] && this->m_min[1] < box.m_max[1] && box.m_min[1] < this->m_max[1] && this->m_min[2] < box.m_max[2] && box.m_min[2] < this->m_max[2]);
 	}
 	
 	/**
@@ -71,6 +80,41 @@ public:
 	void clip(const Ray& ray, float& t0, float& t1)
 	{
 		// --- PUT YOUR CODE HERE ---
+		Vec3f t_0, t_1;
+		float t_near = -1 * std::numeric_limits<float>::infinity();
+		float t_far = std::numeric_limits<float>::infinity();
+		for (int i =0; i<3;i++){
+			if (ray.dir[i] == 0){
+				if ((ray.org[i] < this->m_min[i]) || (ray.org[i] > this->m_max[i])){
+					t0 = std::numeric_limits<float>::infinity();
+					t1 = std::numeric_limits<float>::infinity();
+					return;
+				}
+			}
+			else{
+				t_0[i] = (this->m_min[i] - ray.org[i]) / ray.dir[i];
+				t_1[i] = (this->m_max[i] - ray.org[i]) / ray.dir[i];
+				if (t_0[i] > t_1[i]){
+					Vec3f temp;
+					temp = t_1;
+					t_1 = t_0;
+					t_0 = temp;
+				}
+				if (t_0[i] > t_near){
+					t_near = t_0[i];
+				}
+				if (t_1[i] < t_far){
+					t_far = t_1[i];
+				}
+				if ((t_near > t_far) || (t_far < 0)){
+					t0 = std::numeric_limits<float>::infinity();
+					t1 = std::numeric_limits<float>::infinity();
+					return;
+				}
+			}
+		}
+		t0 = t_near;
+		t1 = t_far;
 	}
 	
 	

@@ -66,6 +66,9 @@ public:
 	{
 		CBoundingBox res;
 		// --- PUT YOUR CODE HERE ---
+		res.extend(Vec3f(m_center[0] + m_radius,m_center[1],m_center[2]));
+		res.extend(Vec3f(m_center[0], m_center[1] + m_radius, m_center[2]));
+		res.extend(Vec3f(m_center[0], m_center[1], m_center[2] + m_radius));
 		return res;
 	}
 	
